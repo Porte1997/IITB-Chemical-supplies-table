@@ -1,23 +1,4 @@
 
-let table_headings = document.querySelectorAll('thead th');
-let table_rows = document.querySelectorAll('tbody tr');
-
-
-table_headings.forEach((head, idx)=>{
-    let sort_asc = false;
-    head.onclick = () =>{
-        sortTableUse(idx, sort_asc);
-    }
-});
-
-function sortTableUse(column, sort_asc){
-    [...table_rows].sort((a,b)=>{
-        let first_row = a.querySelectorAll('td')[column].textContent.toLowerCase();
-        let second_row = b.querySelectorAll('td')[column].textContent.toLowerCase();
-        return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1);
-    }).map(sorted_row => document.querySelector('tbody').appendChild(sorted_row));
-}
-
 // chemical list in json format-->
 var chemicalsArray = [
     {
@@ -325,4 +306,26 @@ function deleteRow(){
     saveData();
     rowsToRender = "";
     render_tab(chemicalsArray);
+}
+
+
+
+let table_headings = document.querySelectorAll('thead th');
+let table_rows = document.querySelectorAll('tbody tr');
+
+var sort_asc = false;
+table_headings.forEach((head, idx)=>{
+    
+    head.onclick = () =>{
+        sortTableUse(idx, sort_asc);
+        sort_asc = !sort_asc;
+    }
+});
+
+function sortTableUse(column, sort_asc){
+    [...table_rows].sort((a,b)=>{
+        let first_row = a.querySelectorAll('td')[column].textContent.toLowerCase();
+        let second_row = b.querySelectorAll('td')[column].textContent.toLowerCase();
+        return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1);
+    }).map(sorted_row => document.querySelector('tbody').appendChild(sorted_row));
 }
