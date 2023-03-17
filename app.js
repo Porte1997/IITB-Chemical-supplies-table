@@ -1,13 +1,32 @@
 
+let table_headings = document.querySelectorAll('thead th');
+let table_rows = document.querySelectorAll('tbody tr');
+
+
+table_headings.forEach((head, idx)=>{
+    let sort_asc = false;
+    head.onclick = () =>{
+        sortTableUse(idx, sort_asc);
+    }
+});
+
+function sortTableUse(column, sort_asc){
+    [...table_rows].sort((a,b)=>{
+        let first_row = a.querySelectorAll('td')[column].textContent.toLowerCase();
+        let second_row = b.querySelectorAll('td')[column].textContent.toLowerCase();
+        return sort_asc ? (first_row < second_row ? 1 : -1) : (first_row < second_row ? -1 : 1);
+    }).map(sorted_row => document.querySelector('tbody').appendChild(sorted_row));
+}
+
 // chemical list in json format-->
-let chemicalsArray = [
+var chemicalsArray = [
     {
         "id": 1,
         "chemical": "HCL",
         "vendor": "Alpha Lab",
         "density": 3525.92,
         "viscosity": 60.63,
-        "pack": "Bottel",
+        "packaging": "Bottel",
         "packSize": 15.00,
         "unit": "ml",
         "quantity": 6495.18
@@ -18,7 +37,7 @@ let chemicalsArray = [
         "vendor": "QA Chem",
         "density": 3175.81,
         "viscosity": 50.27,
-        "pack": "Bottel",
+        "packaging": "Bottel",
         "packSize": 25.00,
         "unit": "ml",
         "quantity": 4812.00
@@ -29,7 +48,7 @@ let chemicalsArray = [
         "vendor": "Nitro Lab",
         "density": 1402.22,
         "viscosity": 15.63,
-        "pack": "Barrel",
+        "packaging": "Barrel",
         "packSize": 2000.00,
         "unit": "l",
         "quantity": 3221.78
@@ -40,7 +59,7 @@ let chemicalsArray = [
         "vendor": "Unit24 chem",
         "density": 364.04,
         "viscosity": 14.16,
-        "pack": "Bag",
+        "packaging": "Bag",
         "packSize": 5.00,
         "unit": "kg",
         "quantity": 30
@@ -51,7 +70,7 @@ let chemicalsArray = [
         "vendor": "iSoda Pharma",
         "density": 825.92,
         "viscosity": 71.63,
-        "pack": "Bag",
+        "packaging": "Bag",
         "packSize": 5.00,
         "unit": "kg",
         "quantity": 20
@@ -62,7 +81,7 @@ let chemicalsArray = [
         "vendor": "cyprus",
         "density": 35.12,
         "viscosity": 124.03,
-        "pack": "Bottel",
+        "packaging": "Bottel",
         "packSize": 70.00,
         "unit": "ml",
         "quantity": 640
@@ -73,7 +92,7 @@ let chemicalsArray = [
         "vendor": "Wonder Chem",
         "density": 125.92,
         "viscosity": 70.63,
-        "pack": "Bag",
+        "packaging": "Bag",
         "packSize": 17.00,
         "unit": "kg",
         "quantity": 95.18
@@ -84,7 +103,7 @@ let chemicalsArray = [
         "vendor": "Sulpha Lab",
         "density": 5075.81,
         "viscosity": 1150.27,
-        "pack": "Bottel",
+        "packaging": "Bottel",
         "packSize": 125.00,
         "unit": "ml",
         "quantity": 112.00
@@ -95,7 +114,7 @@ let chemicalsArray = [
         "vendor": "Nitro Lab",
         "density": 140.22,
         "viscosity": 150.63,
-        "pack": "Barrel",
+        "packaging": "Barrel",
         "packSize": 2000.00,
         "unit": "l",
         "quantity": 32
@@ -106,7 +125,7 @@ let chemicalsArray = [
         "vendor": "Unit24 chem",
         "density": 3611.04,
         "viscosity": 132.16,
-        "pack": "Barrel",
+        "packaging": "Barrel",
         "packSize": 55.00,
         "unit": "l",
         "quantity": 300
@@ -117,7 +136,7 @@ let chemicalsArray = [
         "vendor": "Fogg Pharma",
         "density": 8025.92,
         "viscosity": 171.63,
-        "pack": "Bag",
+        "packaging": "Bag",
         "packSize": 25.00,
         "unit": "kg",
         "quantity": 27
@@ -128,7 +147,7 @@ let chemicalsArray = [
         "vendor": "cyprus Lab",
         "density": 1102.12,
         "viscosity": 24.03,
-        "pack": "Bag",
+        "packaging": "Bag",
         "packSize": 70.00,
         "unit": "kg",
         "quantity": 64
@@ -139,7 +158,7 @@ let chemicalsArray = [
         "vendor": "Hansen Pharma",
         "density": 1100.12,
         "viscosity": 12.03,
-        "pack": "Bottel",
+        "packaging": "Bottel",
         "packSize": 71.00,
         "unit": "ml",
         "quantity": 60
@@ -150,7 +169,7 @@ let chemicalsArray = [
         "vendor": "Cryo Lab",
         "density": 1035.12,
         "viscosity": 1240.03,
-        "pack": "Barrel",
+        "packaging": "Barrel",
         "packSize": 170.00,
         "unit": "l",
         "quantity": 21
@@ -161,7 +180,7 @@ let chemicalsArray = [
         "vendor": "Periodics",
         "density": 3102.12,
         "viscosity": 1024.03,
-        "pack": "Bag",
+        "packaging": "Bag",
         "packSize": 20.00,
         "unit": "kg",
         "quantity": 100
@@ -173,17 +192,15 @@ const tblBody = document.querySelector("#tableStruct tbody");
 let rowsToRender = "";
 let noOfSelectedRow = [];
 
-// getDataFromLocalStorage();
-
 function generateNewRows(val){
     rowsToRender += `<tr>
                         <td><input type="checkbox" onclick="checkRow(event)" data-row-id="${val.id}" /></td>
                         <td>${val.id}</td>
-                        <td oninput="onChangeInput(event)" data-row-id="${val.id}" data-row-name="name" contenteditable>${val.chemical}</td>
+                        <td oninput="onChangeInput(event)" data-row-id="${val.id}" data-row-name="chemical" contenteditable>${val.chemical}</td>
                         <td oninput="onChangeInput(event)" data-row-id="${val.id}" data-row-name="vendor" contenteditable>${val.vendor}</td>
                         <td oninput="onChangeInput(event)" data-row-id="${val.id}" data-row-name="density" contenteditable>${val.density}</td>
                         <td oninput="onChangeInput(event)" data-row-id="${val.id}" data-row-name="viscosity" contenteditable>${val.viscosity}</td>
-                        <td oninput="onChangeInput(event)" data-row-id="${val.id}" data-row-name="packaging" contenteditable>${val.pack}</td>
+                        <td oninput="onChangeInput(event)" data-row-id="${val.id}" data-row-name="packaging" contenteditable>${val.packaging}</td>
                         <td oninput="onChangeInput(event)" data-row-id="${val.id}" data-row-name="packSize" contenteditable>${val.packSize}</td>
                         <td oninput="onChangeInput(event)" data-row-id="${val.id}" data-row-name="unit" contenteditable>${val.unit}</td>
                         <td oninput="onChangeInput(event)" data-row-id="${val.id}" data-row-name="quantity" contenteditable>${val.quantity}</td>
@@ -201,15 +218,15 @@ render_tab(chemicalsArray);
 
 const addRow = () => {
     let row = {
-      id: chemicalsArray.length + 1,
-      chemical: "",
-      vendor: "",
-      density: "",
-      viscosity: "",
-      pack: "",
-      packSize: "",
-      unit: "",
-      quantity: "",
+        id: chemicalsArray.length + 1,
+        chemical: "",
+        vendor: "",
+        density: "",
+        viscosity: "",
+        packaging: "",
+        packSize: "",
+        unit: "",
+        quantity: "",
     };
     chemicalsArray.push(row);
     generateNewRows(row);
@@ -224,10 +241,13 @@ const saveData = () => {
 function getDataFromLocalStorage()  {
     let updatedData = localStorage.getItem("LOCAL_STORAGE");
     chemicalsArray = JSON.parse(updatedData) ? JSON.parse(updatedData) : chemicalsArray;
+    console.log(chemicalsArray);
     localStorage.setItem("LOCAL_STORAGE", JSON.stringify(chemicalsArray));
 }
 
-getDataFromLocalStorage();
+window.onbeforeunload = function() {
+    getDataFromLocalStorage();
+}
 
 function checkRow(e) {
     const elem = e.target;
